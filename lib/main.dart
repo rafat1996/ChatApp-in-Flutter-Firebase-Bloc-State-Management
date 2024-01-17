@@ -1,7 +1,10 @@
 import 'package:chatapp/constants/route.dart';
-import 'package:chatapp/views/chat-view.dart';
+import 'package:chatapp/cubit/login/login_cubit.dart';
+import 'package:chatapp/cubit/register/register_cubit.dart';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -9,7 +12,7 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(ChatApp());
+  runApp(const ChatApp());
 }
 
 class ChatApp extends StatelessWidget {
@@ -17,9 +20,15 @@ class ChatApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      routes: route,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => LoginCubit()),
+        BlocProvider(create: (context) => RegisterCubit()),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        routes: route,
+      ),
     );
   }
 }

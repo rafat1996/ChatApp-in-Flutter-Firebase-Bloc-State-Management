@@ -17,6 +17,7 @@ class CustomTextFormFieldWidget extends StatelessWidget {
         if(data!.isEmpty){
           return 'Please Enter The Field';
         }
+        return null;
       },
       obscureText:obscureText ,
       style: const TextStyle(color: Colors.white),

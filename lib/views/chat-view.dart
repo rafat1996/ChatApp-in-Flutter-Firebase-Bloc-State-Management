@@ -34,7 +34,7 @@ class ChatView extends StatelessWidget {
                           await FirebaseAuth.instance.signOut();
                           Navigator.pushNamed(context, '/');
                         },
-                        icon: Icon(Icons.exit_to_app_sharp))
+                        icon: const Icon(Icons.exit_to_app_sharp,color: Colors.black,))
                   ],
                   backgroundColor: kSecoundColor,
                   automaticallyImplyLeading: false,
@@ -82,19 +82,19 @@ class ChatView extends StatelessWidget {
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                               borderSide:
-                                  BorderSide(color: kSecoundColor, width: 2),
+                                  const BorderSide(color: kSecoundColor, width: 2),
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(15),
                               borderSide:
-                                  BorderSide(color: kSecoundColor, width: 2),
+                                  const BorderSide(color: kSecoundColor, width: 2),
                             )),
                       ),
                     ),
                   ],
                 ));
           } else {
-            return Text('Loading');
+            return const Text('Loading');
           }
         });
   }
