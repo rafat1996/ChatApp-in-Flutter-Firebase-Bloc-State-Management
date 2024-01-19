@@ -1,6 +1,6 @@
+import 'package:chatapp/bloc/auth/auth_bloc.dart';
 import 'package:chatapp/constants/color.dart';
-import 'package:chatapp/cubit/login/login_cubit.dart';
-
+import 'package:chatapp/cubit/chat/chat_cubit.dart';
 
 import 'package:chatapp/helper/show-snack-bar.dart';
 import 'package:chatapp/widgets/custom-button-widget.dart';
@@ -10,30 +10,31 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class LoginView extends StatelessWidget {
-   LoginView({super.key});
+  const LoginView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
     GlobalKey<FormState> formKey = GlobalKey();
 
     String? email;
 
     String? password;
     bool isLoading = false;
-  @override
-  Widget build(BuildContext context) {
 
-
-    return BlocConsumer<LoginCubit, LoginState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is LoginLoading) {
           isLoading = true;
         } else if (state is LoginSuccess) {
           isLoading = false;
-          Navigator.pushNamed(context, 'ChatView');
+          BlocProvider.of<ChatCubit>(context).getMessage();
+          Navigator.pushNamed(context, 'ChatView', arguments: email);
         } else if (state is LoginFailure) {
           showSnackBar(context, state.errorMessage);
           isLoading = false;
         }
       },
-      builder:(context,state)=> ModalProgressHUD(
+      child: ModalProgressHUD(
         inAsyncCall: isLoading,
         child: Scaffold(
           backgroundColor: kPrimeryColor,
@@ -95,11 +96,10 @@ class LoginView extends StatelessWidget {
                   ),
                   CustomButtonWidget(
                     text: 'Login',
-                    onTap: () async{
-                      
+                    onTap: () async {
                       if (formKey.currentState!.validate()) {
-                        BlocProvider.of<LoginCubit>(context)
-                            .loginServices(email!, password!);
+                        BlocProvider.of<AuthBloc>(context).add(
+                            LoginEvent(email: email!, password: password!));
                       } else {
                         showSnackBar(context, 'something went Wrong');
                       }

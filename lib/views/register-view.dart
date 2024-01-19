@@ -1,11 +1,10 @@
+import 'package:chatapp/bloc/auth/auth_bloc.dart';
 import 'package:chatapp/constants/color.dart';
-import 'package:chatapp/cubit/register/register_cubit.dart';
+import 'package:chatapp/cubit/chat/chat_cubit.dart';
 import 'package:chatapp/helper/show-snack-bar.dart';
-import 'package:chatapp/services/register-services.dart';
 import 'package:chatapp/widgets/custom-button-widget.dart';
 import 'package:chatapp/widgets/custom-text-form-field-widget.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
@@ -21,20 +20,21 @@ class RegisterView extends StatelessWidget {
     GlobalKey<FormState> formKey = GlobalKey();
 
     bool isLoading = false;
-    return BlocConsumer<RegisterCubit, RegisterState>(
+    return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is RegisterLoading) {
           isLoading = true;
         } else if (state is RegisterSuccess) {
-          Navigator.pushNamed(context, 'ChatView');
+            BlocProvider.of<ChatCubit>(context).getMessage();
+          Navigator.pushNamed(context, 'ChatView',arguments: email);
           isLoading = false;
         } else if (state is RegisterFailure) {
           showSnackBar(context, state.errorMessage);
           isLoading = false;
         }
       },
-      builder: (context, state) {
-        return ModalProgressHUD(
+      
+        child: ModalProgressHUD(
           inAsyncCall: isLoading,
           child: Scaffold(
             backgroundColor: kPrimeryColor,
@@ -63,8 +63,8 @@ class RegisterView extends StatelessWidget {
                     const SizedBox(
                       height: 25,
                     ),
-                    Row(
-                      children: const [
+                    const Row(
+                      children: [
                         Text(
                           'Register',
                           style: TextStyle(fontSize: 25, color: Colors.white),
@@ -98,8 +98,7 @@ class RegisterView extends StatelessWidget {
                       text: 'Register',
                       onTap: () {
                         if (formKey.currentState!.validate()) {
-                          BlocProvider.of<RegisterCubit>(context)
-                              .resgisterServices(email!, password!);
+                          BlocProvider.of<AuthBloc>(context).add(RegisterEvent(email: email!, password: password!));
                         } else {
                           showSnackBar(context, 'something went Wrong');
                         }
@@ -130,8 +129,8 @@ class RegisterView extends StatelessWidget {
               ),
             ),
           ),
-        );
-      },
+        ),
+    
     );
   }
 }
